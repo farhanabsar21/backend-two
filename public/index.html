@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <title>WebSocket with public & private channel</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>WebSocket Public Channel</h1>
+    <div>
+      <input
+        id="messageInput"
+        placeholder="Type a message"
+      />
+      <button onclick="sendMessage()">Send Message To test Socket</button>
+    </div>
+
+    <div>
+      <input
+        id="publicMessageInput"
+        placeholder="type a public message"
+      />
+      <button onclick="sendPublicMessage()">Send Public Message</button>
+    </div>
+
+    <script>
+      const baseUrl = "http://localhost:8080";
+      const socket = io(baseUrl);
+
+      // Join public channel
+      socket.emit("join-public");
+
+      // Listen for public messages
+      socket.on("public-message", (msg) => {
+        console.log("Received public message:", msg);
+      });
+
+      // Send message to public channel
+      function sendMessage() {
+        const msg = document.getElementById("messageInput").value;
+        socket.emit("public-message", msg);
+        msg = "";
+      }
+
+      // Send message to public route
+      function sendPublicMessage() {
+        const message = document.getElementById("publicMessageInput").value;
+
+        if (!message) {
+          alert("Please enter a message.");
+          return;
+        }
+
+        fetch(`${baseUrl}/api/v1/messages/public`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ message }),
+        })
+          .then((response) => {
+            if (!response.ok) {
+              alert("something went wrong!");
+            }
+            return response.json();
+          })
+          .then((data) => {
+            if (data) {
+              alert("message sent!");
+            }
+            document.getElementById("publicMessageInput").value = "";
+          })
+          .catch((error) => {
+            console.error("There has been a problem with your fetch operation:", error);
+          });
+      }
+    </script>
+  </body>
+</html>
