@@ -1,0 +1,15 @@
+{
+  "name": "farhanabsarofficial21-gmail_node_and_express",
+  "version": "1.0.0",
+  "description": "operating-system",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js"
+  },
+  "author": "Farhan",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.21.1"
+  }
+}
